@@ -1,1 +1,1 @@
-# AtmoSync-Micro-Climate-Arbitrage-Analytics
+# AtmoSync: MicroClimate Arbitrage Analytics
