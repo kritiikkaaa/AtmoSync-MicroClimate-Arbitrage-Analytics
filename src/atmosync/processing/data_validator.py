@@ -11,9 +11,14 @@ from pathlib import Path
 FIELDNAMES = [
     "timestamp",
     "sensor_id",
+    "container_id",
+    "commodity",
+    "origin",
+    "destination",
     "location_id",
     "temperature_c",
     "humidity_pct",
+    "vibration_level",
     "soil_moisture_pct",
 ]
 
@@ -22,6 +27,40 @@ SENSOR_LOCATIONS = {
     "SENSOR_002": "LOCATION_B",
     "SENSOR_003": "LOCATION_C",
 }
+
+CONTAINER_DETAILS = {
+    "SENSOR_001": {
+        "container_id": "CONT_001",
+        "commodity": "Mango",
+        "origin": "Mumbai",
+        "destination": "Delhi",
+    },
+    "SENSOR_002": {
+        "container_id": "CONT_002",
+        "commodity": "Grapes",
+        "origin": "Nashik",
+        "destination": "Bengaluru",
+    },
+    "SENSOR_003": {
+        "container_id": "CONT_003",
+        "commodity": "Avocado",
+        "origin": "Pune",
+        "destination": "Mumbai",
+    },
+}
+
+CONTAINER_FIELDS = [
+    "container_id",
+    "commodity",
+    "origin",
+    "destination",
+    "vibration_level",
+]
+
+
+def clean_value(row, field):
+    """Return a safely trimmed string value."""
+    return str(row.get(field, "") or "").strip()
 
 
 def validate_readings(readings):
@@ -34,22 +73,42 @@ def validate_readings(readings):
     for row in readings:
         errors = []
 
-        # Check for missing fields
-        for field in FIELDNAMES:
-            if not row.get(field, "").strip():
+        # Check the original required sensor fields.
+        original_fields = [
+            "timestamp",
+            "sensor_id",
+            "location_id",
+            "temperature_c",
+            "humidity_pct",
+            "soil_moisture_pct",
+        ]
+
+        for field in original_fields:
+            if not clean_value(row, field):
                 errors.append(f"Missing value: {field}")
 
-        # Validate timestamp
-        timestamp = row.get("timestamp", "").strip()
+        # Support both legacy six-column records and new container records.
+        has_container_data = any(
+            clean_value(row, field) for field in CONTAINER_FIELDS
+        )
+
+        if has_container_data:
+            for field in CONTAINER_FIELDS:
+                if not clean_value(row, field):
+                    errors.append(f"Missing value: {field}")
+
+        # Validate timestamp.
+        timestamp = clean_value(row, "timestamp")
+
         try:
             datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
         except ValueError:
             if timestamp:
                 errors.append("Invalid timestamp")
 
-        # Validate sensor and location
-        sensor_id = row.get("sensor_id", "").strip()
-        location_id = row.get("location_id", "").strip()
+        # Validate sensor and location.
+        sensor_id = clean_value(row, "sensor_id")
+        location_id = clean_value(row, "location_id")
 
         if sensor_id and sensor_id not in SENSOR_LOCATIONS:
             errors.append("Unknown sensor ID")
@@ -57,15 +116,33 @@ def validate_readings(readings):
             if SENSOR_LOCATIONS[sensor_id] != location_id:
                 errors.append("Sensor-location mismatch")
 
-        # Validate numeric readings
+        # Validate container metadata when it is present.
+        if has_container_data and sensor_id in CONTAINER_DETAILS:
+            expected = CONTAINER_DETAILS[sensor_id]
+
+            for field in [
+                "container_id",
+                "commodity",
+                "origin",
+                "destination",
+            ]:
+                value = clean_value(row, field)
+
+                if value and value != expected[field]:
+                    errors.append(f"Container metadata mismatch: {field}")
+
+        # Validate numeric sensor readings.
         numeric_fields = {
             "temperature_c": (-20, 60),
             "humidity_pct": (0, 100),
             "soil_moisture_pct": (0, 100),
         }
 
+        if has_container_data:
+            numeric_fields["vibration_level"] = (0.05, 1.20)
+
         for field, (minimum, maximum) in numeric_fields.items():
-            value = row.get(field, "").strip()
+            value = clean_value(row, field)
 
             if value:
                 try:
@@ -79,7 +156,7 @@ def validate_readings(readings):
                 except ValueError:
                     errors.append(f"Invalid number: {field}")
 
-        # Check duplicate timestamp and sensor combinations
+        # Check duplicate timestamp and sensor combinations.
         if timestamp and sensor_id:
             record_key = (timestamp, sensor_id)
 
@@ -136,7 +213,7 @@ def main():
     project_root = Path(__file__).resolve().parents[3]
 
     parser = argparse.ArgumentParser(
-        description="Validate AtmoSync sensor data"
+        description="Validate AtmoSync sensor and container data"
     )
     parser.add_argument(
         "--input",

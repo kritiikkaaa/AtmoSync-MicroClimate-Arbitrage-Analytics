@@ -1,1 +1,1 @@
-timestamp,sensor_id,location_id,temperature_c,humidity_pct,soil_moisture_pct,validation_errors
+timestamp,sensor_id,container_id,commodity,origin,destination,location_id,temperature_c,humidity_pct,vibration_level,soil_moisture_pct,validation_errors
