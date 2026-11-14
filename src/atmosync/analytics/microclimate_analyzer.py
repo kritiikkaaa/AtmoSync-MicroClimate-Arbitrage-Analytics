@@ -13,7 +13,23 @@ METRICS = [
     "humidity_pct",
     "soil_moisture_pct",
 ]
+DEMO_TEMP_LIMIT_C = {
+    "Mango": 13.0,
+    "Grapes": 4.0,
+    "Avocado": 7.0,
+}
 
+
+def temperature_risk_score(reading):
+    """Return a demo risk score based on one reading's temperature."""
+    commodity = reading.get("commodity", "").strip()
+    limit = DEMO_TEMP_LIMIT_C.get(commodity)
+
+    if limit is None:
+        return 0.0
+
+    excess = max(0.0, float(reading["temperature_c"]) - limit)
+    return round(min(excess * 20, 100), 2)
 
 def load_readings(input_path):
     """Load validated sensor readings from CSV."""
@@ -34,7 +50,6 @@ def analyze_locations(readings):
         locations[reading["location_id"]].append(reading)
 
     summaries = {}
-
     for location_id, location_readings in locations.items():
         summaries[location_id] = {
             "location_id": location_id,
@@ -45,7 +60,18 @@ def analyze_locations(readings):
             values = [float(row[metric]) for row in location_readings]
             summaries[location_id][f"avg_{metric}"] = round(mean(values), 2)
 
-    # Calculate network-wide averages
+        risk_scores = [
+            temperature_risk_score(reading)
+            for reading in location_readings
+            if reading.get("commodity")
+        ]
+
+        summaries[location_id]["avg_temperature_risk_pct"] = (
+            round(mean(risk_scores), 2) if risk_scores else 0.0
+        )
+
+
+     # Calculate network-wide averages
     network_averages = {}
 
     for metric in METRICS:
@@ -109,6 +135,7 @@ def save_analysis(results, output_path):
         "location_id",
         "readings_count",
         "avg_temperature_c",
+        "avg_temperature_risk_pct",
         "avg_humidity_pct",
         "avg_soil_moisture_pct",
         "divergence_score",
@@ -154,9 +181,9 @@ def main():
     for rank, result in enumerate(results, start=1):
         print(
             f"{rank}. {result['location_id']} | "
+            f"Temperature risk: {result['avg_temperature_risk_pct']}% | "
             f"Divergence score: {result['divergence_score']}"
         )
-
     print(f"\nAnalysis saved: {output_path}")
 
 

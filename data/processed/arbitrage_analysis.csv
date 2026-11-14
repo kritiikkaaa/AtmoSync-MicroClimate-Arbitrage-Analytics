@@ -1,0 +1,4 @@
+container_id,commodity,alternate_market,net_reroute_uplift,recommendation
+CONT_001,Mango,Pune,20000.0,Positive uplift
+CONT_002,Grapes,Delhi,14000.0,Positive uplift
+CONT_003,Avocado,Bengaluru,18000.0,Positive uplift

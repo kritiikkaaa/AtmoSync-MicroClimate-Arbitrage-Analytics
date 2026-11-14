@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AtmoSync Arbitrage Dashboard</title>
+<style>
+body { margin:0; padding:32px; background:#101827; color:#eef4f8;
+       font:16px Arial,sans-serif; }
+main { max-width:1050px; margin:auto; }
+h1 { color:#54d6b1; }
+.note { color:#b2c0cf; }
+.cards { display:flex; gap:16px; margin:24px 0; flex-wrap:wrap; }
+.card { background:#1b293a; padding:18px 22px; border-radius:12px;
+         min-width:210px; }
+.card span { display:block; color:#b2c0cf; font-size:14px; }
+.card strong { display:block; margin-top:8px; font-size:24px; }
+table { width:100%; border-collapse:collapse; background:#1b293a; }
+th,td { padding:14px; border-bottom:1px solid #344458; text-align:left; }
+th { color:#54d6b1; }
+.bar { height:7px; background:#344458; margin-top:7px; border-radius:5px; }
+.bar span { display:block; height:100%; background:#54d6b1; border-radius:5px; }
+</style>
+</head>
+<body>
+<main>
+<h1>AtmoSync · Reroute Opportunities</h1>
+<p class="note">Synthetic demonstration data and demo risk thresholds.</p>
+<div class="cards">
+  <div class="card"><span>Containers</span><strong>3</strong></div>
+  <div class="card"><span>High demo-risk containers</span><strong>1</strong></div>
+  <div class="card"><span>Total estimated uplift</span><strong>₹52,000</strong></div>
+</div>
+<table>
+<thead><tr>
+<th>Container</th><th>Commodity</th><th>Alternate market</th>
+<th>Temp risk</th><th>Net uplift</th><th>Recommendation</th>
+</tr></thead>
+<tbody><tr><td>CONT_001</td><td>Mango</td><td>Pune</td><td>2.60%</td><td>₹20,000<div class="bar"><span style="width:100.0%"></span></div></td><td>Review alternate market</td></tr><tr><td>CONT_002</td><td>Grapes</td><td>Delhi</td><td>62.03%</td><td>₹14,000<div class="bar"><span style="width:70.0%"></span></div></td><td>Reroute candidate</td></tr><tr><td>CONT_003</td><td>Avocado</td><td>Bengaluru</td><td>42.72%</td><td>₹18,000<div class="bar"><span style="width:90.0%"></span></div></td><td>Review alternate market</td></tr></tbody>
+</table>
+</main>
+</body>
+</html>

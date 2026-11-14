@@ -1,0 +1,4 @@
+container_id,commodity,quantity_kg,origin_market_price_per_kg,alternate_market,alternate_market_price_per_kg,extra_freight_cost
+CONT_001,Mango,1000,100,Pune,125,5000
+CONT_002,Grapes,1200,120,Delhi,135,4000
+CONT_003,Avocado,800,250,Bengaluru,280,6000

@@ -1,0 +1,4 @@
+container_id,commodity,location_id,temperature_risk_pct,alternate_market,net_reroute_uplift,recommendation
+CONT_001,Mango,LOCATION_A,2.6,Pune,20000.0,Review alternate market
+CONT_002,Grapes,LOCATION_B,62.03,Delhi,14000.0,Reroute candidate
+CONT_003,Avocado,LOCATION_C,42.72,Bengaluru,18000.0,Review alternate market

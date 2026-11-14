@@ -1,4 +1,4 @@
-location_id,readings_count,avg_temperature_c,avg_humidity_pct,avg_soil_moisture_pct,divergence_score
-LOCATION_B,167,8.74,66.74,49.19,51.21
-LOCATION_C,166,8.31,68.05,50.74,32.6
-LOCATION_A,167,8.35,67.06,52.58,31.87
+location_id,readings_count,avg_temperature_c,avg_temperature_risk_pct,avg_humidity_pct,avg_soil_moisture_pct,divergence_score
+LOCATION_A,334,8.08,2.6,68.28,50.61,52.15
+LOCATION_C,333,8.67,42.72,67.64,49.11,41.4
+LOCATION_B,333,8.17,62.03,67.81,48.75,26.19
