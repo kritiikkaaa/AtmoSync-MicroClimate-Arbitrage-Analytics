@@ -137,3 +137,10 @@ Run from the repository folder:
 .\.venv\Scripts\python.exe scripts\make_streaming_recommendations.py
 .\.venv\Scripts\python.exe scripts\build_arbitrage_dashboard.py
 
+## One-command pipeline
+
+After creating the virtual environment, run the complete demo pipeline with:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_pipeline.py
+
