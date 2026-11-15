@@ -124,3 +124,16 @@ This repository currently runs locally from CSV files. A live Kafka stream, Snow
 
 \- `reports/charts/`: SVG charts and HTML dashboards
 
+## Local event-stream simulation
+
+This no-install demo writes sensor events to a local JSON Lines file. It simulates a producer and consumer, but does not use an actual Kafka broker.
+
+Run from the repository folder:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\stream_sensor_data.py
+.\.venv\Scripts\python.exe scripts\consume_sensor_stream.py
+.\.venv\Scripts\python.exe scripts\calculate_arbitrage.py
+.\.venv\Scripts\python.exe scripts\make_streaming_recommendations.py
+.\.venv\Scripts\python.exe scripts\build_arbitrage_dashboard.py
+
