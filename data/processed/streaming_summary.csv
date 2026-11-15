@@ -1,0 +1,4 @@
+container_id,commodity,event_count,avg_temperature_c,avg_humidity_pct,avg_vibration_level,avg_temperature_risk_pct
+CONT_001,Mango,334,8.08,68.28,0.644,2.6
+CONT_002,Grapes,333,8.17,67.81,0.6,62.03
+CONT_003,Avocado,333,8.67,67.64,0.612,42.72
