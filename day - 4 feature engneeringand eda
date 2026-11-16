@@ -1,0 +1,9 @@
+# Day 4 – Feature Engineering & Exploratory Data Analysis (AtmoSync)
+
+## Progress Summary 
+- **Data Cleaning & Validation:** Verified sensor data consistency, handled missing values, and checked timestamp alignment across microclimate records.
+- **Feature Engineering:** Created derived environmental indicators (temperature-humidity variance and arbitrage spread metrics) for downstream analytics.
+- **Exploratory Data Analysis (EDA):** Analyzed distribution trends and anomalies across regional climate zones using Python.
+
+## Next Steps
+- Build correlation summaries and finalize analytical visualizations for team review.
