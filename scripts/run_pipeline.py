@@ -47,11 +47,21 @@ steps = [
         [],
     ),
     (
+        "Load SQLite warehouse",
+        "scripts/load_sqlite_warehouse.py",
+        [],
+    ),
+    (
+        "Transform SQLite warehouse",
+        "scripts/transform_sqlite_warehouse.py",
+        [],
+    ),
+    (
         "Build arbitrage dashboard",
         "scripts/build_arbitrage_dashboard.py",
         [],
     ),
-]
+   ]
 
 for name, script, arguments in steps:
     print(f"\n=== {name} ===", flush=True)

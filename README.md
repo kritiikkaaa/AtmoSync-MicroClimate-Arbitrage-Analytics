@@ -143,4 +143,15 @@ After creating the virtual environment, run the complete demo pipeline with:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_pipeline.py
+## Local SQLite warehouse
+
+The pipeline loads validated sensor readings and mock market quotes into local SQLite raw tables, then creates staging views and a container-level analytics mart using SQL.
+
+The database file is generated at `data/atmosync_warehouse.db` and is ignored by Git. The SQL mart is exported to `data/processed/sqlite_mart.csv`.
+
+To rebuild it independently:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\load_sqlite_warehouse.py
+.\.venv\Scripts\python.exe scripts\transform_sqlite_warehouse.py
 
