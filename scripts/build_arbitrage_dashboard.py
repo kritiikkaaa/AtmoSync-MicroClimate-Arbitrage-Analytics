@@ -5,7 +5,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 INPUT_FILE = (
-    PROJECT_ROOT / "data" / "processed" / "reroute_recommendations.csv"
+    PROJECT_ROOT / "data" / "processed" / "sqlite_mart.csv"
 )
 OUTPUT_FILE = (
     PROJECT_ROOT / "reports" / "charts" / "arbitrage_dashboard.html"
@@ -21,7 +21,7 @@ total_uplift = sum(
     float(row["net_reroute_uplift"]) for row in recommendations
 )
 high_risk_count = sum(
-    float(row["temperature_risk_pct"]) >= 50
+    float(row["avg_temperature_risk_pct"]) >= 50
     for row in recommendations
 )
 max_uplift = max(
@@ -32,7 +32,7 @@ table_rows = []
 
 for row in recommendations:
     uplift = float(row["net_reroute_uplift"])
-    risk = float(row["temperature_risk_pct"])
+    risk = float(row["avg_temperature_risk_pct"])
     bar_width = max(0, uplift / max(max_uplift, 1) * 100)
 
     table_rows.append(

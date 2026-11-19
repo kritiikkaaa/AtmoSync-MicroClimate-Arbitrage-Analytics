@@ -119,6 +119,7 @@ with sqlite3.connect(DATABASE_FILE) as connection:
         SELECT
             container_id,
             commodity,
+            alternate_market,
             event_count,
             avg_temperature_risk_pct,
             net_reroute_uplift,
@@ -139,8 +140,7 @@ with OUTPUT_FILE.open("w", newline="", encoding="utf-8") as file:
 print(f"Containers in SQL mart: {len(rows)}")
 for row in rows:
     print(
-        f"{row[0]} | Risk: {row[3]}% | "
-        f"Uplift: ₹{row[4]:,.0f} | {row[5]}"
+        f"{row[0]} | Risk: {row[4]}% | "
+        f"Uplift: ₹{row[5]:,.0f} | {row[6]}"
     )
-
 print(f"Mart exported: {OUTPUT_FILE}")
