@@ -1,0 +1,14 @@
+
+import pandas as pd
+
+def run_correlation_analysis(df: pd.DataFrame):
+    """
+    Computes correlation matrix for numerical microclimate & arbitrage features.
+    """
+    numeric_df = df.select_dtypes(include=['float64', 'int64'])
+    corr_matrix = numeric_df.corr()
+    return corr_matrix
+
+if __name__ == "__main__":
+    # Sample check for local/notebook execution
+    print("AtmoSync Day 5: Correlation analysis module ready.")
