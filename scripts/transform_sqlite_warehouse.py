@@ -1,7 +1,14 @@
 import csv
+import os
 import sqlite3
 from pathlib import Path
 
+RISK_THRESHOLD_PCT = float(
+    os.environ.get("ATMOSYNC_RISK_THRESHOLD_PCT", "50")
+)
+
+if not 0 <= RISK_THRESHOLD_PCT <= 100:
+    raise ValueError("ATMOSYNC_RISK_THRESHOLD_PCT must be between 0 and 100")
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATABASE_FILE = PROJECT_ROOT / "data" / "atmosync_warehouse.db"
@@ -9,8 +16,9 @@ OUTPUT_FILE = (
     PROJECT_ROOT / "data" / "processed" / "sqlite_mart.csv"
 )
 
-SQL = """
+SQL = f"""
 DROP VIEW IF EXISTS stg_sensor_readings;
+
 
 CREATE VIEW stg_sensor_readings AS
 SELECT
@@ -101,11 +109,11 @@ SELECT
     avg_temperature_risk_pct,
     net_reroute_uplift,
     CASE
-        WHEN avg_temperature_risk_pct >= 50
-             AND net_reroute_uplift > 0
+        WHEN avg_temperature_risk_pct >= {RISK_THRESHOLD_PCT}
+          AND net_reroute_uplift > 0
             THEN 'Reroute candidate'
-        WHEN avg_temperature_risk_pct >= 50
-            THEN 'High risk: expedite'
+        WHEN avg_temperature_risk_pct >= {RISK_THRESHOLD_PCT}
+            THEN 'High risk: expedite'       
         WHEN net_reroute_uplift > 0
             THEN 'Review alternate market'
         ELSE 'Continue planned route'
@@ -144,3 +152,8 @@ for row in rows:
         f"Uplift: ₹{row[5]:,.0f} | {row[6]}"
     )
 print(f"Mart exported: {OUTPUT_FILE}")
+RISK_THRESHOLD_PCT = float(
+    os.environ.get("ATMOSYNC_RISK_THRESHOLD_PCT", "50")
+)
+if not 0 <= RISK_THRESHOLD_PCT <= 100:
+    raise ValueError("ATMOSYNC_RISK_THRESHOLD_PCT must be between 0 and 100")
