@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_iot_telemetry
+    description: Validated, typed telemetry decoded from the Snowflake raw JSON payload.
+    columns:
+      - name: event_id
+        tests: [not_null, unique]
+      - name: event_ts
+        tests: [not_null]
+      - name: container_id
+        tests: [not_null]
+      - name: temperature_c
+        tests:
+          - accepted_range: {min_value: -30, max_value: 30}
+      - name: humidity_pct
+        tests:
+          - accepted_range: {min_value: 0, max_value: 100}
+      - name: vibration_g
+        tests:
+          - accepted_range: {min_value: 0, max_value: 5}
+
+  - name: stg_commodity_prices
+    description: Cleaned Week 2 reference prices loaded from the mock CSV seed.
+    columns:
+      - name: price_date
+        tests: [not_null]
+      - name: market_price_inr_per_kg
+        tests:
+          - accepted_range: {min_value: 0, max_value: 10000}
+
+  - name: int_container_telemetry_enriched
+    description: Week 2 baseline dataset joining validated telemetry to same-day destination prices.
+    columns:
+      - name: event_id
+        tests: [not_null, unique]
+      - name: temperature_status
+        tests:
+          - accepted_values:
+              values: [within_baseline_range, above_cold_chain_target, below_cold_chain_target]

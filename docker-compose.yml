@@ -1,0 +1,71 @@
+services:
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: atmosync-kafka
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,PLAINTEXT_HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      KAFKA_CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: atmosync-superset-db
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+    volumes:
+      - superset-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U superset -d superset"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: atmosync-superset-redis
+
+  superset:
+    build: ./superset
+    container_name: atmosync-superset
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8088:8088"
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:?Set SUPERSET_SECRET_KEY in .env}
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://superset:superset@postgres:5432/superset
+      REDIS_HOST: redis
+      SUPERSET_LOAD_EXAMPLES: "no"
+    command:
+      - /bin/sh
+      - -ec
+      - >-
+        superset db upgrade && if ! superset fab list-users | grep -q "$${SUPERSET_ADMIN_USERNAME:-admin}"; then superset fab create-admin --username "$${SUPERSET_ADMIN_USERNAME:-admin}" --firstname AtmoSync --lastname Admin --email "$${SUPERSET_ADMIN_EMAIL:-admin@atmosync.local}" --password "$${SUPERSET_ADMIN_PASSWORD:-admin}"; fi && superset init && /usr/bin/run-server.sh
+    volumes:
+      - ./superset:/app/superset_home/atmosync:ro
+
+volumes:
+  superset-postgres:

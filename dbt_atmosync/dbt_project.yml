@@ -1,0 +1,31 @@
+name: atmosync
+version: "1.0.0"
+config-version: 2
+
+profile: atmosync
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  atmosync:
+    +materialized: view
+    staging:
+      +schema: ANALYTICS
+    intermediate:
+      +schema: ANALYTICS
+
+seeds:
+  atmosync:
+    +schema: REFERENCE
+    commodity_prices:
+      +column_types:
+        price_date: date
+        commodity: varchar(40)
+        market: varchar(80)
+        market_price_inr_per_kg: number(10,2)
+        currency: varchar(3)

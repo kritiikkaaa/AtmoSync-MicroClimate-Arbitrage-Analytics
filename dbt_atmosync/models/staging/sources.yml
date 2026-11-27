@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Immutable Kafka messages stored by the Week 1 Snowflake loader.
+    database: "{{ env_var('SNOWFLAKE_DATABASE', 'ATMOSYNC') }}"
+    schema: RAW
+    tables:
+      - name: raw_iot_telemetry
+        description: One row per raw telemetry event; PAYLOAD is the source JSON VARIANT.
+        loaded_at_field: ingested_at
+        freshness:
+          warn_after: {count: 15, period: minute}
+          error_after: {count: 60, period: minute}

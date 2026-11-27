@@ -1,0 +1,47 @@
+version: 1
+project: AtmoSync
+scope: Week 1-2 baseline only
+
+database_connection:
+  engine: Snowflake
+  role: ATMOSYNC_ANALYST
+  warehouse: ATMOSYNC_WH
+  database: ATMOSYNC
+  uri_template: "snowflake://<user>:<url-encoded-password>@<account>/ATMOSYNC/<schema>?warehouse=ATMOSYNC_WH&role=ATMOSYNC_ANALYST"
+
+datasets:
+  - name: raw_telemetry_integrity
+    table: RAW.RAW_IOT_TELEMETRY
+    purpose: Mid-review proof that Superset reads immutable raw Snowflake data.
+    time_column: EVENT_TS
+    columns: [EVENT_ID, EVENT_TS, CONTAINER_ID, KAFKA_TOPIC, KAFKA_PARTITION, KAFKA_OFFSET, PAYLOAD, INGESTED_AT]
+  - name: container_telemetry_enriched
+    table: ANALYTICS.INT_CONTAINER_TELEMETRY_ENRICHED
+    purpose: Clean Week 2 analytical base for temperature and route views.
+    time_column: EVENT_TS
+    columns: [EVENT_ID, EVENT_TS, CONTAINER_ID, ROUTE_ID, COMMODITY, DESTINATION_MARKET, TEMPERATURE_C, HUMIDITY_PCT, VIBRATION_G, MARKET_PRICE_INR_PER_KG, TEMPERATURE_STATUS]
+
+charts:
+  - name: Raw telemetry integrity table
+    dataset: raw_telemetry_integrity
+    type: table
+    columns: [EVENT_ID, EVENT_TS, CONTAINER_ID, KAFKA_TOPIC, KAFKA_PARTITION, KAFKA_OFFSET, INGESTED_AT]
+    sort: [INGESTED_AT, descending]
+    purpose: Verify Superset row-level fidelity against Snowflake raw data.
+  - name: Container temperature over time
+    dataset: container_telemetry_enriched
+    type: time-series line
+    time_column: EVENT_TS
+    metric: avg(TEMPERATURE_C)
+    group_by: [CONTAINER_ID]
+    purpose: Reveal normal readings and the controlled Container A drift.
+  - name: Route health summary
+    dataset: container_telemetry_enriched
+    type: table
+    group_by: [ROUTE_ID, CONTAINER_ID, TEMPERATURE_STATUS]
+    metrics: [count(EVENT_ID), max(EVENT_TS), avg(TEMPERATURE_C)]
+    purpose: Baseline route and container monitoring, not an arbitrage recommendation.
+
+dashboard:
+  name: AtmoSync - Week 2 Baseline Monitoring
+  charts: [Raw telemetry integrity table, Container temperature over time, Route health summary]

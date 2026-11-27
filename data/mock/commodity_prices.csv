@@ -1,0 +1,16 @@
+price_date,commodity,market,market_price_inr_per_kg,currency
+2026-11-27,avocado,Bengaluru,182.00,INR
+2026-11-27,avocado,Hyderabad,176.00,INR
+2026-11-27,mango,Pune,128.00,INR
+2026-11-28,avocado,Bengaluru,184.00,INR
+2026-11-28,avocado,Hyderabad,177.00,INR
+2026-11-28,mango,Pune,130.00,INR
+2026-11-29,avocado,Bengaluru,179.00,INR
+2026-11-29,avocado,Hyderabad,181.00,INR
+2026-11-29,mango,Pune,126.00,INR
+2026-11-30,avocado,Bengaluru,187.00,INR
+2026-11-30,avocado,Hyderabad,180.00,INR
+2026-11-30,mango,Pune,131.00,INR
+2026-12-01,avocado,Bengaluru,190.00,INR
+2026-12-01,avocado,Hyderabad,183.00,INR
+2026-12-01,mango,Pune,133.00,INR

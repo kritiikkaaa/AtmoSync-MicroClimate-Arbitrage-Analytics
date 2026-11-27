@@ -1,26 +1,8 @@
-# Python
+.env
+.venv/
 __pycache__/
 *.py[cod]
-*.so
-
-# Virtual environment
-.venv/
-venv/
-env/
-
-# Environment variables
-.env
-.env.*
-
-# Jupyter
-.ipynb_checkpoints/
-
-# OS files
-.DS_Store
-
-# IDE
-.vscode/
-.idea/
-
-# Logs
-*.log
+.pytest_cache/
+.coverage
+target/
+logs/
